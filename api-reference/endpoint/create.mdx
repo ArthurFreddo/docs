@@ -1,4 +1,35 @@
 ---
-title: 'Create Plant'
-openapi: 'POST /plants'
+title: "Available Schedules"
+description: "Endpoint para consultar horários disponíveis"
 ---
+
+## Available Schedules
+
+Este endpoint permite consultar os horários disponíveis para agendamento de um serviço em um determinado período.
+
+### Método HTTP
+
+`GET`
+
+### URL
+
+```bash
+{{base_url}}/api/available
+
+| Header Name     | Tipo   | Descrição                                                  | Obrigatório |
+|-----------------|--------|------------------------------------------------------------|-------------|
+| `client-id`     | string | ID único do cliente que está requisitando                   | Sim         |
+| `client-code`   | string | Código do cliente requisitante                              | Sim         |
+| `device-id`     | string | Código do dispositivo do qual o cliente está requisitando   | Sim         |
+| `authorization` | string | Chave de autenticação da API no formato Basic               | Sim         |
+
+| Parâmetro    | Tipo    | Descrição                                                                                         | Obrigatório |
+|--------------|---------|---------------------------------------------------------------------------------------------------|-------------|
+| `start_date` | string  | Data de início no formato `DD/MM/YYYY HH:mm:ss` para consulta de horários disponíveis              | Sim         |
+| `end_date`   | string  | Data de término no formato `DD/MM/YYYY HH:mm:ss` para consulta de horários disponíveis             | Sim         |
+| `service`    | string  | ID do serviço a ser consultado                                                                    | Sim         |
+| `professional`| string | ID do profissional (opcional)                                                                     | Não         |
+| `combo`      | string  | ID do combo, obrigatório quando o serviço for `0`                                                  | Condicional |
+
+GET {{base_url}}/api/available?start_date=09/11/2023 00:00:00&end_date=09/11/2023 23:59:59&service=1254&combo=1051
+
