@@ -1,0 +1,123 @@
+---
+title: "Acessar"
+openapi: 'POST /api/available'
+description: "Endpoint para acesso dos clientes"
+---
+
+Este endpoint permite autenticar um usuário no sistema através de seu e-mail e senha, ou através de `external_id` quando o campo `type` for diferente de 1. O `external_id` representa o ID para autenticação por serviços externos (como Google, Facebook, etc.), e deve ser acompanhado do e-mail do usuário para garantir a confirmação do serviço utilizado.
+
+### Tipos de Autenticação
+
+Os tipos de autenticação são os seguintes, conforme a tabela abaixo:
+
+| Tipo | Descrição           |
+|------|---------------------|
+| 1    | E-mail e Senha       |
+| 2    | Facebook Beleza      |
+| 3    | Facebook Barber      |
+| 4    | Apple                |
+| 5    | Google               |
+| 6    | Celular              |
+
+### Método HTTP
+`POST`
+
+### URL
+`/api/signin`
+
+### Cabeçalhos
+
+| Header Name      | Tipo   | Descrição                               | Obrigatório |
+|------------------|--------|-----------------------------------------|-------------|
+| `authorization`  | string | Chave de autenticação da API no formato Basic | Sim        |
+
+### Parâmetros no Corpo da Requisição
+
+| Parâmetro      | Tipo     | Descrição                                                                                                   | Obrigatório |
+|----------------|----------|------------------------------------------------------------------------------------------------------------|-------------|
+| `email`        | string   | O e-mail do usuário. Deve ser um e-mail válido.                                                             | Sim         |
+| `password`     | string   | A senha do usuário. Quando o campo `external_id` está presente, a senha pode ser vazia ou omitida.           | Condicional |
+| `external_id`  | string   | ID externo usado para autenticação (ex: Facebook, Google). Obrigatório quando `type` é diferente de 1.      | Condicional |
+| `device`       | string   | Identificação do dispositivo do usuário.                                                                    | Não         |
+| `os_version`   | string   | Versão do sistema operacional do dispositivo.                                                               | Não         |
+| `os`           | string   | Sistema operacional do dispositivo (Android, iOS, etc).                                                     | Não         |
+| `brand`        | string   | Marca do dispositivo (ex: Samsung, Apple).                                                                  | Não         |
+| `model`        | string   | Modelo do dispositivo.                                                                                      | Não         |
+| `device_id`    | string   | ID do dispositivo.                                                                                          | Não         |
+| `latitude`     | number   | Latitude da localização do usuário.                                                                         | Não         |
+| `longitude`    | number   | Longitude da localização do usuário.                                                                        | Não         |
+| `device_type`  | string   | Tipo de dispositivo (ex: Mobile, Tablet).                                                                   | Não         |
+| `type`         | number   | Tipo de autenticação. Deve ser um dos valores: 1 (Email e Senha), 2 (Facebook Beleza), 3 (Facebook Barber), 4 (Apple), 5 (Google), 6 (Celular). | Sim         |
+
+### Regras de Validação
+
+- **E-mail**: Deve ser um e-mail válido e não pode ser vazio.
+- **Senha**: 
+  - Obrigatória se o `external_id` não for fornecido.
+  - Quando `external_id` está presente, a senha pode ser vazia.
+- **external_id**: Obrigatório quando o campo `type` é diferente de 1.
+- **type**: O campo deve ser um dos valores válidos, conforme a tabela de tipos de autenticação.
+
+### Exemplo de Requisição
+
+```json
+{
+  "email": "usuario@email.com",
+  "password": "senha123",
+  "device": "Mobile",
+  "os_version": "14.6",
+  "os": "iOS",
+  "brand": "Apple",
+  "model": "iPhone 12",
+  "device_id": "ABCD1234EFGH5678",
+  "latitude": -23.550520,
+  "longitude": -46.633308,
+  "device_type": "Mobile",
+  "type": 1,
+  "external_id": null
+}
+```
+
+### Exemplo de Resposta de Sucesso
+
+```json
+{
+    "error": false,
+    "message": "Conectado com sucesso",
+    "client_token": "a1b2c3d4e5f67890abcdef1234567890",
+    "client": {
+        "name": "Usuario",
+        "email": "usuario@email.com",
+        "photo": "",
+        "phone": 12345678901,
+        "code": 12345,
+        "id": "abcdef1234567890abcdef1234567890",
+        "device": "device-uuid-1234-5678",
+        "confirmed": 1,
+        "client_zoop_id": "zoop123456789abcdef1234567890"
+    },
+    "token_confirmation": "",
+    "resend_to": ""
+}
+```
+
+### Observações:
+Após o login bem-sucedido, três informações são essenciais para algumas requisições futuras: `code`, `client_token` e `device`. Esses dados devem ser utilizados nos headers de solicitações subsequentes para garantir que o cliente esteja autenticado corretamente e autorizado a realizar ações no sistema.
+
+Esses campos são obrigatórios nos headers de várias requisições, e sem eles, o sistema não poderá validar o cliente. Segue a explicação de cada um:
+
+- **client_token**: Identificador único do cliente (passado como `client-id` nos headers). 
+- **code**: Código do cliente (passado como `client-code` nos headers).
+- **device**: ID do dispositivo do cliente (passado como `device-id` nos headers).
+
+### Exemplo de Cabeçalhos para Requisições Futuras
+
+Nas requisições subsequentes, você precisará adicionar os seguintes valores nos headers:
+
+```json
+{
+  "client-id": "a1b2c3d4e5f67890abcdef1234567890",
+  "client-code": "12345",
+  "device-id": "device-uuid-1234-5678",
+  "authorization": "Basic <api_key>"
+}
