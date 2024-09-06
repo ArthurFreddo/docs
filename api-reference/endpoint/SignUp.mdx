@@ -1,0 +1,84 @@
+---
+title: 'Cadastrar'
+openapi: 'POST /api/signUp'
+description: 'Endpoint que permite a criação de um novo usuário no sistema'
+---
+
+## Cadastrar Usuário
+
+Este endpoint permite a criação de um novo usuário no sistema. O cadastro é vinculado ao número de telefone, e caso o número já esteja cadastrado, uma mensagem de confirmação será enviada para o e-mail fornecido.
+
+
+### Método HTTP
+
+**POST**
+
+### Cabeçalhos
+
+| Header Name    | Tipo   | Descrição                                    | Obrigatório |
+|----------------|--------|----------------------------------------------|-------------|
+| `authorization`| string | Chave de autenticação da API no formato Basic | Sim         |
+
+### Parâmetros do Corpo da Requisição
+
+| Parâmetro     | Tipo    | Descrição                                              | Obrigatório |
+|---------------|---------|--------------------------------------------------------|-------------|
+| `phone`       | string  | Número de telefone do usuário, deve conter pelo menos 10 dígitos e apenas números. | Sim         |
+| `mail`        | string  | Endereço de e-mail do usuário.                          | Sim         |
+| `password`    | string  | Senha do usuário, deve conter pelo menos 4 caracteres.  | Sim         |
+| `dial_code`   | string  | Código DDI (discagem internacional), deve conter apenas números. | Sim         |
+| `type`        | number  | Tipo de cadastro (1 a 5). Valores possíveis: `1` (Email e Senha), `2` (Facebook Beleza), `3` (Facebook Barber), `4` (Apple), `5` (Google). | Sim         |
+| `external_id` | string  | ID de autenticação externa, obrigatório para tipos de cadastro diferentes de `1`. | Não (apenas para `type` = 1) |
+| `name`        | string  | Nome completo do usuário, deve conter pelo menos 3 caracteres. | Sim         |
+
+### Exemplo de Body
+
+```json
+{
+  "phone": "99123456789",
+  "mail": "usuario@email.com",
+  "password": "SenhaSegura123!",
+  "dial_code": "55",
+  "type": 1,
+  "name": "Usuario de Teste"
+}
+```
+### Exemplo de Resposta com Sucesso
+Quando o cadastro for realizado com sucesso, a API retornará a seguinte resposta:
+
+```json
+{
+    "message": "Usuário criado com sucesso",
+    "user": {
+        "error": false,
+        "message": "Cadastrado com sucesso.",
+        "customer": []
+    }
+}
+```
+### Caso o Número de Telefone Já Esteja Cadastrado
+Se o número de telefone já estiver cadastrado no sistema, será retornada uma mensagem informando que o cadastro já existe e que será enviada uma mensagem para o e-mail do cliente para confirmação de identidade:
+
+```json
+{
+    "message": "Usuário criado com sucesso",
+    "user": {
+        "error": true,
+        "message": "Já existe um cadastro com esse telefone. Você receberá uma mensagem no email usuario@email.com para confirmar sua identidade!",
+        "customer": [
+            {
+                "error": 2,
+                "error_code": 20001,
+                "error_type": 2,
+                "result": "Já existe um cadastro com esse telefone. Você receberá uma mensagem no email usuario@email.com para confirmar sua identidade!",
+                "client_code": 123456,
+                "confirmation_token": "abcd1234efgh5678ijkl9012mnop3456",
+                "confirmation_email": "usuario@email.com",
+                "confirmation_id": "",
+                "send_type": 1,
+                "fields": ""
+            }
+        ]
+    }
+}
+```
