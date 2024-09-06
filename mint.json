@@ -49,20 +49,18 @@
     {
       "group": "Endpoints",
       "pages": [
-        "api-reference/endpoint/get",
         "api-reference/endpoint/SignUp",
         "api-reference/endpoint/SignIn",
-        "api-reference/endpoint/delete",
         "api-reference/endpoint/Available"
 
       ]
     }
   ],
   "footerSocials": {
-    "StarApp": "http://starapp.com.br/",
-    "Intagram": "https://www.instagram.com/starappsistemas/",
     "linkedin": "https://www.linkedin.com/company/starapp-sistemas",
-    "AppBarber": "https://appbarber.com.br/",
-    "AppBeleza": "https://www.appbeleza.com.br/"
+    "instagram": "https://www.instagram.com/starappsistemas/",
+    "website": "http://starapp.com.br/",
+    "appbarber": "https://appbarber.com.br/",
+    "appbeleza": "https://www.appbeleza.com.br/"
   }
 }
