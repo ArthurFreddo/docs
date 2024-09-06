@@ -135,37 +135,46 @@
   },
   "components": {
     "schemas": {
-      "Plant": {
+      "Appointment": {
         "required": [
-          "name"
+          "start_time",
+          "service_id",
+          "client_id"
         ],
         "type": "object",
         "properties": {
-          "name": {
-            "description": "The name of the plant",
-            "type": "string"
+          "start_time": {
+            "description": "Horário do agendamento.",
+            "type": "string",
+            "example": "09/11/2024 15:30:00"
           },
-          "tag": {
-            "description": "Tag to specify the type",
-            "type": "string"
+          "service_id": {
+            "description": "ID do serviço agendado.",
+            "type": "integer",
+            "example": 609936
+          },
+          "client_id": {
+            "description": "ID do cliente que agendou o serviço.",
+            "type": "string",
+            "example": "58205"
           }
         }
       },
-      "NewPlant": {
+      "NewAppointment": {
         "allOf": [
           {
-            "$ref": "#/components/schemas/Plant"
+            "$ref": "#/components/schemas/Appointment"
           },
           {
             "required": [
-              "id"
+              "professional_id"
             ],
             "type": "object",
             "properties": {
-              "id": {
-                "description": "Identification number of the plant",
+              "professional_id": {
+                "description": "ID do profissional que irá realizar o serviço.",
                 "type": "integer",
-                "format": "int64"
+                "example": 7087344
               }
             }
           }
