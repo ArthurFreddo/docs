@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "OpenAPI Plant Store",
-    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
+    "title": "API de Agendamento - StarApp",
+    "description": "Uma API para gerenciamento de agendamentos no sistema StarApp, permitindo a consulta de horários, serviços e profissionais disponíveis.",
     "license": {
       "name": "MIT"
     },
@@ -10,7 +10,7 @@
   },
   "servers": [
     {
-      "url": "http://sandbox.mintlify.com"
+      "url": "http://localhost:4000"
     }
   ],
   "security": [
@@ -18,73 +18,72 @@
       "bearerAuth": []
     }
   ],
+
   "paths": {
-    "/plants": {
+    "/available": {
       "get": {
-        "description": "Returns all plants from the system that the user has access to",
+        "description": "Retorna os horários disponíveis para agendamentos.",
         "parameters": [
           {
-            "name": "limit",
+            "name": "start_date",
             "in": "query",
-            "description": "The maximum number of results to return",
+            "description": "Data de início no formato 'DD/MM/YYYY HH:mm:ss'.",
+            "schema": {
+              "type": "string",
+              "example": "09/11/2024 00:00:00"
+            }
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "description": "Data de término no formato 'DD/MM/YYYY HH:mm:ss'.",
+            "schema": {
+              "type": "string",
+              "example": "09/11/2024 23:59:59"
+            }
+          },
+          {
+            "name": "service",
+            "in": "query",
+            "description": "ID do serviço.",
             "schema": {
               "type": "integer",
-              "format": "int32"
+              "example": 609936
+            }
+          },
+          {
+            "name": "client_id",
+            "in": "query",
+            "description": "ID do cliente que está requisitando.",
+            "schema": {
+              "type": "string",
+              "example": "58205"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Plant response",
+            "description": "Horários disponíveis.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Plant"
+                    "type": "object",
+                    "properties": {
+                      "time": {
+                        "type": "string",
+                        "description": "Horário disponível",
+                        "example": "09/11/2024 14:00:00"
+                      }
+                    }
                   }
                 }
               }
             }
           },
           "400": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "description": "Creates a new plant in the store",
-        "requestBody": {
-          "description": "Plant to add to the store",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewPlant"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "plant response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Plant"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "unexpected error",
+            "description": "Erro de validação ou parâmetros inválidos",
             "content": {
               "application/json": {
                 "schema": {
@@ -96,28 +95,33 @@
         }
       }
     },
-    "/plants/{id}": {
-      "delete": {
-        "description": "Deletes a single plant based on the ID supplied",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of plant to delete",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
+    "/appointments": {
+      "post": {
+        "description": "Agendar um serviço.",
+        "requestBody": {
+          "description": "Dados do agendamento.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewAppointment"
+              }
             }
-          }
-        ],
+          },
+          "required": true
+        },
         "responses": {
-          "204": {
-            "description": "Plant deleted",
-            "content": {}
+          "200": {
+            "description": "Agendamento criado com sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Appointment"
+                }
+              }
+            }
           },
           "400": {
-            "description": "unexpected error",
+            "description": "Erro ao tentar criar o agendamento.",
             "content": {
               "application/json": {
                 "schema": {
@@ -132,37 +136,46 @@
   },
   "components": {
     "schemas": {
-      "Plant": {
+      "Appointment": {
         "required": [
-          "name"
+          "start_time",
+          "service_id",
+          "client_id"
         ],
         "type": "object",
         "properties": {
-          "name": {
-            "description": "The name of the plant",
-            "type": "string"
+          "start_time": {
+            "description": "Horário do agendamento.",
+            "type": "string",
+            "example": "09/11/2024 15:30:00"
           },
-          "tag": {
-            "description": "Tag to specify the type",
-            "type": "string"
+          "service_id": {
+            "description": "ID do serviço agendado.",
+            "type": "integer",
+            "example": 609936
+          },
+          "client_id": {
+            "description": "ID do cliente que agendou o serviço.",
+            "type": "string",
+            "example": "58205"
           }
         }
       },
-      "NewPlant": {
+      "NewAppointment": {
         "allOf": [
           {
-            "$ref": "#/components/schemas/Plant"
+            "$ref": "#/components/schemas/Appointment"
           },
           {
             "required": [
-              "id"
+              "professional_id"
             ],
             "type": "object",
             "properties": {
-              "id": {
-                "description": "Identification number of the plant",
+              "professional_id": {
+                "description": "ID do profissional que irá realizar o serviço.",
                 "type": "integer",
-                "format": "int64"
+                "example": 7087344
               }
             }
           }
@@ -193,3 +206,4 @@
     }
   }
 }
+
