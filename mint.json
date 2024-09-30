@@ -46,15 +46,17 @@
         "api-reference/introduction"
       ]
     },
-    {
-      "group": "Endpoints",
-      "pages": [
-        "api-reference/endpoint/SignUp",
-        "api-reference/endpoint/SignIn",
-        "api-reference/endpoint/Available"
-
-      ]
-    }
+   {
+  "group": "Endpoints",
+  "pages": [
+    "api-reference/endpoint/SignUp",
+    "api-reference/endpoint/SignIn",
+    "api-reference/endpoint/Available",
+    "api-reference/endpoint/ForgotPasswordSMS",
+    "api-reference/endpoint/ForgotPasswordEmail",
+    "api-reference/endpoint/CancelAppointment"
+  ]
+}
   ],
   "footerSocials": {
     "linkedin": "https://www.linkedin.com/company/starapp-sistemas",
