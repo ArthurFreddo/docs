@@ -38,15 +38,15 @@ Os tipos de autenticação são os seguintes, conforme a tabela abaixo:
 | `email`        | string   | O e-mail do usuário. Deve ser um e-mail válido.                                                             | Sim         |
 | `password`     | string   | A senha do usuário. Quando o campo `external_id` está presente, a senha pode ser vazia ou omitida.           | Condicional |
 | `external_id`  | string   | ID externo usado para autenticação (ex: Facebook, Google). Obrigatório quando `type` é diferente de 1.      | Condicional |
-| `device`       | string   | Identificação do dispositivo do usuário.                                                                    | Não         |
-| `os_version`   | string   | Versão do sistema operacional do dispositivo.                                                               | Não         |
-| `os`           | string   | Sistema operacional do dispositivo (Android, iOS, etc).                                                     | Não         |
-| `brand`        | string   | Marca do dispositivo (ex: Samsung, Apple).                                                                  | Não         |
-| `model`        | string   | Modelo do dispositivo.                                                                                      | Não         |
-| `device_id`    | string   | ID do dispositivo.                                                                                          | Não         |
-| `latitude`     | number   | Latitude da localização do usuário.                                                                         | Não         |
-| `longitude`    | number   | Longitude da localização do usuário.                                                                        | Não         |
-| `device_type`  | string   | Tipo de dispositivo (ex: Mobile, Tablet).                                                                   | Não         |
+| `device`       | string   | Identificação do dispositivo do usuário.                                                                    | Sim         |
+| `os_version`   | string   | Versão do sistema operacional do dispositivo.                                                               | Sim         |
+| `os`           | string   | Sistema operacional do dispositivo (Android, iOS, etc).                                                     | Sim         |
+| `brand`        | string   | Marca do dispositivo (ex: Samsung, Apple).                                                                  | Sim         |
+| `model`        | string   | Modelo do dispositivo.                                                                                      | Sim         |
+| `device_id`    | string   | ID do dispositivo.                                                                                          | Sim         |
+| `latitude`     | number   | Latitude da localização do usuário.                                                                         | Sim         |
+| `longitude`    | number   | Longitude da localização do usuário.                                                                        | Sim         |
+| `device_type`  | string   | Tipo de dispositivo (ex: Mobile, Tablet).                                                                   | Sim         |
 | `type`         | number   | Tipo de autenticação. Deve ser um dos valores: 1 (Email e Senha), 2 (Facebook Beleza), 3 (Facebook Barber), 4 (Apple), 5 (Google), 6 (Celular). | Sim         |
 
 ### Regras de Validação

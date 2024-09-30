@@ -98,78 +98,7 @@ Este endpoint permite consultar os horários disponíveis para agendamento de um
     }
   ]
 }
-
-We support most markdown formatting. Simply add `**`, `_`, or `~` around text to format it.
-
-| Style         | How to write it   | Result          |
-| ------------- | ----------------- | --------------- |
-| Bold          | `**bold**`        | **bold**        |
-| Italic        | `_italic_`        | _italic_        |
-| Strikethrough | `~strikethrough~` | ~strikethrough~ |
-
-### URL
-
-<api-playground method="GET" url="{{base_url}}/api/available">
-
-### Headers
-  <api-header name="authorization" type="string" value="Basic {{api_client_key}}" required>
-    Authorization string (Basic)
-  </api-header>
-  <api-header name="client-id" type="string" required>
-    ID do cliente requisitante
-  </api-header>
-  <api-header name="client-code" type="string" required>
-    Código do cliente requisitante
-  </api-header>
-  <api-header name="device-id" type="string" required>
-    ID do dispositivo do cliente
-  </api-header>
-
-### Query Params
-  <api-param name="start_date" type="string" required>
-    Data de início no formato `DD/MM/YYYY HH:mm:ss`
-  </api-param>
-  <api-param name="end_date" type="string" required>
-    Data de término no formato `DD/MM/YYYY HH:mm:ss`
-  </api-param>
-  <api-param name="service" type="string" required>
-    ID do serviço
-  </api-param>
-  <api-param name="professional" type="string" optional>
-    ID do profissional (opcional)
-  </api-param>
-  <api-param name="combo" type="string" optional>
-    ID do combo (obrigatório se `service` for 0)
-  </api-param>
-
-</api-playground>
-
-
-## Exemplo de Resposta
-
-```json
-{
-  "data": [
-    {
-      "employee_code": 11241446,
-      "employee_name": "Adrian Henrique de Sousa Cola",
-      "employee_image": "https://s3-url.com/image.png",
-      "avaliable": [
-        {
-          "scheduling_time": "08:00:00",
-          "scheduling_order": 0,
-          "scheduling_value": 40
-        },
-        {
-          "scheduling_time": "08:15:00",
-          "scheduling_order": 1,
-          "scheduling_value": 40
-        }
-      ]
-    }
-  ]
-}
-
+```
 
 
 
