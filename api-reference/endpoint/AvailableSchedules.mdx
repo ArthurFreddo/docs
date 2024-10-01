@@ -1,0 +1,176 @@
+---
+
+title: 'Consultar Horários Disponíveis'
+openapi: 'GET /api/schedules'
+description: 'Endpoint que permite consultar os horários disponíveis para um serviço ou combo no sistema'
+---
+
+Este endpoint permite consultar os horários disponíveis para agendamentos de serviços ou combos no sistema. O cliente deve enviar um intervalo de datas, informações sobre o serviço ou combo, e os cabeçalhos apropriados para obter a lista de horários disponíveis.
+
+
+### Método HTTP
+
+`GET`
+
+---
+### **URL** `/api/schedules`
+
+### Cabeçalhos
+
+| Header Name       | Tipo    | Descrição                                     | Obrigatório |
+|-------------------|---------|-----------------------------------------------|-------------|
+| `authorization`   | string  | Chave de autenticação da API no formato Basic  | Sim         |
+| `client_id`       | string  | Identificador único do cliente                 | Sim         |
+| `client-code`     | string  | Código único do cliente no sistema             | Sim         |
+| `device-id`       | string  | Identificador do dispositivo                   | Sim         |
+
+### Parâmetros da Query
+
+| Parâmetro        | Tipo    | Descrição                                                | Obrigatório |
+|------------------|---------|----------------------------------------------------------|-------------|
+| `start_date`     | string  | Data e hora de início do intervalo de busca (formato `DD/MM/AAAA HH:mm:ss`) | Sim         |
+| `end_date`       | string  | Data e hora de término do intervalo de busca (formato `DD/MM/AAAA HH:mm:ss`) | Sim         |
+| `service`        | string  | Código do serviço. Se for vazio, o campo **combo** será obrigatório. | Sim         |
+| `combo`          | string  | Código do combo. Se o serviço for fornecido, o combo pode ser vazio. | Sim         |
+
+
+### Exemplo de Resposta com Sucesso
+
+```json
+{
+    "error": false,
+    "message": "",
+    "schedules": [
+        {
+            "avaliable": [
+                {
+                    "scheduling_time": "16:40:00",
+                    "scheduling_order": 76,
+                    "scheduling_value": 35,
+                    "scheduling_discount": "0.00%"
+                },
+                {
+                    "scheduling_time": "15:00:00",
+                    "scheduling_order": 66,
+                    "scheduling_value": 35,
+                    "scheduling_discount": "0.00%"
+                },
+                {
+                    "scheduling_time": "15:10:00",
+                    "scheduling_order": 67,
+                    "scheduling_value": 35,
+                    "scheduling_discount": "0.00%"
+                },
+                }
+            ],
+            "employee_code": 1234567,
+            "employee_name": "01 - João Silva",
+            "employee_image": null,
+            "employee_nickname": "João",
+            "appointment_number": 5,
+            "secondary_employee_image": null,
+            "secondary_employee_nickname": null
+        },
+        {
+            "avaliable": [
+                {
+                    "scheduling_time": "16:00:00",
+                    "scheduling_order": 71,
+                    "scheduling_value": 35,
+                    "scheduling_discount": "5.00%"
+                },
+                {
+                    "scheduling_time": "16:10:00",
+                    "scheduling_order": 72,
+                    "scheduling_value": 35,
+                    "scheduling_discount": "5.00%"
+                }
+            ],
+            "employee_code": 9876543,
+            "employee_name": "02 - Maria Souza",
+            "employee_image": null,
+            "employee_nickname": "Maria",
+            "appointment_number": 3,
+            "secondary_employee_image": null,
+            "secondary_employee_nickname": null
+        }
+    ]
+}
+```
+
+Neste exemplo, os horários disponíveis são seguidos pelas informações do profissional que tem esses horários vagos, incluindo o código do profissional, nome, apelido, e outros detalhes.
+
+---
+
+### Formatação da Resposta
+
+A resposta do endpoint é formatada em um objeto JSON contendo várias informações sobre os horários disponíveis e o profissional responsável por eles. A estrutura principal da resposta é a seguinte:
+
+- **error**: Indica se ocorreu um erro na solicitação. Um valor de `false` indica que a operação foi bem-sucedida.
+- **message**: Uma mensagem opcional que pode ser retornada com informações adicionais.
+- **schedules**: Este é um array que contém os horários disponíveis e as informações dos profissionais. Dentro deste array, cada item possui:
+  - **avaliable**: Um array que lista os horários disponíveis para agendamento. Cada objeto dentro deste array inclui:
+    - `scheduling_time`: O horário específico disponível.
+    - `scheduling_order`: Um identificador único para o horário de agendamento.
+    - `scheduling_value`: O valor associado a esse horário.
+    - `scheduling_discount`: Qualquer desconto aplicado ao valor do agendamento, em porcentagem.
+  - **employee_code**: Código do profissional que possui esses horários disponíveis.
+  - **employee_name**: Nome completo do profissional.
+  - **employee_nickname**: Apelido do profissional.
+  - **appointment_number**: Quantidade de agendamentos feitos com o profissional.
+  - **secondary_employee_image** e **secondary_employee_nickname**: Caso o profissional tenha um assistente ou colaborador, essas informações serão exibidas.
+
+---
+
+### Exemplo de Query Params
+
+```json
+{
+  "start_date": "09/11/2023 00:00:00",
+  "end_date": "09/11/2023 23:59:59",
+  "service": "combo - 1051"
+}
+```
+
+### Exemplo de Resposta com Erro - Data Menor que a Atual
+
+```json
+{
+    "error": false,
+    "message": "",
+    "schedules": null
+}
+```
+
+### Exemplo de Resposta com Erro - Aprovação do Estabelecimento
+
+```json
+{
+    "error": true,
+    "message": "",
+    "schedules": [
+        {
+            "error": 2,
+            "error_code": 20011,
+            "error_type": 2,
+            "result": "Para visualizar os horários solicite a aprovação do estabelecimento",
+            "fields": ""
+        }
+    ]
+}
+```
+
+Esse erro ocorre quando o parâmetro `11 - Aprovar Solicitação de Cadastro Automaticamente` está configurado como `"Não"`, exigindo aprovação manual pelo estabelecimento para a visualização dos horários. Neste caso, é necessário que o cliente faça uma solicitação de cadastro.
+
+### Possíveis Erros de Validação
+
+```json
+{
+  "error": true,
+  "message": "Validation failed",
+  "details": [
+    "A data de início é obrigatória.",
+    "O serviço ou combo deve ser informado."
+  ]
+}
+```

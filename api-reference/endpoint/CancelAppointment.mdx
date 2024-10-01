@@ -1,0 +1,55 @@
+---
+
+title: 'Cancelar Agendamento'
+openapi: 'DELETE /api/cancel'
+description: 'Endpoint que permite o cancelamento de um agendamento no sistema'
+---
+
+Este endpoint permite cancelar um agendamento previamente realizado no sistema, fornecendo o código do agendamento e, opcionalmente, um motivo para o cancelamento.
+
+### Método HTTP
+
+`DELETE`
+
+### Cabeçalhos
+
+| Header Name    | Tipo   | Descrição                                    | Obrigatório |
+|----------------|--------|----------------------------------------------|-------------|
+| `client-id`    | string | Identificador único do cliente                | Sim         |
+| `client-code`  | string | Código do cliente no sistema                  | Sim         |
+| `device-id`    | string | Identificador único do dispositivo            | Sim         |
+
+### Parâmetros do Corpo da Requisição
+
+| Parâmetro        | Tipo    | Descrição                                                | Obrigatório |
+|------------------|---------|----------------------------------------------------------|-------------|
+| `schedule_code`  | string  | Código único do agendamento a ser cancelado               | Sim         |
+| `motive`         | string  | Motivo opcional para o cancelamento                       | Não         |
+
+### Exemplo de Body
+
+```json
+{
+  "schedule_code": "AGND123456",
+  "motive": "Imprevistos pessoais"
+}
+```
+
+### Exemplo de Resposta com Sucesso
+
+```json
+{
+  "result": {
+    "success": true,
+    "message": "Agendamento cancelado com sucesso."
+  }
+}
+```
+
+### Exemplo de Resposta com Erro
+
+```json
+{
+  "error": "Failed to cancel appointment"
+}
+```
