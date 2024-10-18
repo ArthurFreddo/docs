@@ -1,4 +1,62 @@
 ---
-title: 'New file'
-description: 'Description of your new file.'
+title: 'Obter Serviços Disponíveis'
+openapi: 'GET /api/services'
+description: 'Endpoint para obter os serviços disponíveis associados a um estabelecimento específico. A identificação do estabelecimento é obtida através da API_KEY.'
 ---
+
+## Obter Serviços Disponíveis
+
+Este endpoint retorna a lista de serviços disponíveis em um determinado estabelecimento, com base na `API_KEY` fornecida no cabeçalho da requisição. 
+
+⚠️ **Nota:** O campo de `API_KEY` pode ser alterado no futuro dependendo do modelo de negócio adotado pela empresa. 
+
+### Método HTTP
+
+`GET`
+
+### Cabeçalhos
+
+| Header Name       | Tipo    | Descrição                                         | Obrigatório |
+|-------------------|---------|---------------------------------------------------|-------------|
+| `authorization`   | string  | Chave de autenticação da API no formato Basic     | Sim         |
+
+### Parâmetros da Query
+
+Este endpoint não utiliza parâmetros de query. Todas as informações são baseadas na `API_KEY` fornecida no cabeçalho.
+
+### Exemplo de Body da Requisição
+
+Este endpoint não necessita de um corpo para a requisição.
+
+### Exemplo de Resposta com Sucesso
+
+```json
+{
+    "error": false,
+    "message": "Serviços recuperados com sucesso",
+    "services": [
+        {
+            "service_id": 12345,
+            "service_name": "Corte de Cabelo Masculino",
+            "service_duration": "30 minutos",
+            "service_price": 50.00
+        },
+        {
+            "service_id": 67890,
+            "service_name": "Barba Completa",
+            "service_duration": "20 minutos",
+            "service_price": 35.00
+        }
+    ]
+}
+```
+
+### Exemplo de Resposta com Erro
+
+```json
+{
+    "error": true,
+    "message": "API_KEY inválida ou não fornecida.",
+    "services": null
+}
+```

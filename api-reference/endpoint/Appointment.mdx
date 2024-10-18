@@ -1,0 +1,108 @@
+---
+title: 'Agendar Serviço'
+openapi: 'POST /api/appointment'
+description: 'Endpoint para realizar o agendamento de serviços no sistema.'
+---
+
+## Agendar Serviço
+
+Este endpoint permite que um cliente agende um serviço, especificando o profissional, o tipo de item e outras informações essenciais para o agendamento.
+
+⚠️ **Nota:** Certifique-se de que o campo `schedule_origin` tenha o valor padrão de 9, que se refere à origem da API. Esse valor pode ser alterado futuramente
+
+### Método HTTP
+
+`POST`
+
+### Cabeçalhos
+
+| Header Name       | Tipo    | Descrição                                             | Obrigatório |
+|-------------------|---------|-------------------------------------------------------|-------------|
+| `authorization`   | string  | Chave de autenticação da API no formato Basic          | Sim         |
+| `client-id`       | string  | Identificador único do cliente                         | Sim         |
+| `client-code`     | string  | Código do cliente relacionado ao estabelecimento       | Sim         |
+| `device-id`       | string  | Identificador único do dispositivo                     | Sim         |
+
+### Parâmetros do Corpo da Requisição
+
+| Parâmetro             | Tipo    | Descrição                                                                                                  | Obrigatório |
+|-----------------------|---------|------------------------------------------------------------------------------------------------------------|-------------|
+| `client_code`         | string  | Código único do cliente no sistema.                                                                        | Sim         |
+| `client_person_code`  | string  | Código único da pessoa no sistema, relacionado ao cliente.                                                  | Sim         |
+| `observation`         | string  | Observações opcionais sobre o agendamento.                                                                  | Não         |
+| `schedule_origin`     | number  | Origem do agendamento. O valor padrão é 9 (API), e deve ser mantido.                                        | Sim         |
+| `coupon`              | string  | Cupom de desconto. Ainda não implementado.                                                                  | Não         |
+| `start_date`          | string  | Data de início do agendamento no formato `DD/MM/YYYY HH:mm:ss`. Pode incluir até 3 datas separadas por vírgula. | Sim         |
+| `professional`        | string  | Código(s) do(s) profissional(is) responsável(is) pelo serviço, separados por vírgula (até 3 profissionais).  | Sim         |
+| `item_type`           | string  | Código(s) do tipo(s) de item a ser utilizado no agendamento, separados por vírgula (até 3 itens).            | Sim         |
+| `item`                | string  | Código(s) do(s) item(ns) a ser(em) utilizado(s) no serviço, separados por vírgula (até 3 itens).            | Sim         |
+| `duration`            | string  | Duração(s) dos itens do serviço em minutos, separados por vírgula (até 3 durações).                        | Sim         |
+
+### Exemplo de Body da Requisição
+
+```json
+{
+  "client_code": "12345",
+  "client_person_code": "67890",
+  "observation": "Favor chegar 10 minutos antes.",
+  "schedule_origin": 9,
+  "start_date": "09/11/2023 10:00:00,09/11/2023 11:00:00",
+  "professional": "1001,1002",
+  "item_type": "2001,2002",
+  "item": "3001,3002",
+  "duration": "60,30"
+}
+```
+
+### Exemplo de Resposta com Sucesso
+
+```json
+{
+  "result": {
+    "error": false,
+    "message": "Agendamento criado com sucesso.",
+    "appointment_id": "AB123456",
+    "appointment_details": {
+      "client_code": "12345",
+      "professional_code": "1001",
+      "service": "Corte de Cabelo",
+      "start_time": "09/11/2023 10:00:00",
+      "duration": "60 minutos"
+    }
+  }
+}
+```
+
+### Exemplo de Resposta com Erro
+
+```json
+{
+  "error": true,
+  "message": "Não foi possível realizar o agendamento",
+  "details": [
+    {
+      "error_code": 10011,
+      "error_type": 1,
+      "result": "Cliente não encontrado",
+      "fields": "client_code"
+    }
+  ]
+}
+```
+
+### Possíveis Erros
+
+- `400`: Quando há erro de validação nos parâmetros da requisição (ex: campos vazios ou em formato incorreto).
+- `500`: Erro interno no servidor ao tentar processar o agendamento.
+
+### Validação Personalizada
+
+Esse endpoint realiza uma validação personalizada para garantir que os campos `start_date`, `professional`, `item_type`, `item`, e `duration` tenham o mesmo número de valores. Caso contrário, o seguinte erro será retornado:
+
+```json
+{
+  "error": true,
+  "message": "O campo 'item' não tem a mesma quantidade de valores que os outros campos."
+}
+```
+

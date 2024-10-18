@@ -54,7 +54,11 @@
     "api-reference/endpoint/Available",
     "api-reference/endpoint/ForgotPasswordSMS",
     "api-reference/endpoint/ForgotPasswordEmail",
-    "api-reference/endpoint/CancelAppointment"
+    "api-reference/endpoint/CancelAppointment",
+    "api-reference/endpoint/AvailableSchedules",
+    "api-reference/endpoint/AvailableServices",
+    "api-reference/endpoint/AppointMultipleSchedule",
+    "api-reference/endpoint/Appointment"
   ]
 }
   ],

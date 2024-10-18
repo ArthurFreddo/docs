@@ -1,0 +1,174 @@
+---
+title: 'Agendar Serviço com Múltiplos Itens'
+openapi: 'POST /api/appointment'
+description: 'Endpoint para realizar o agendamento de múltiplos serviços no sistema.'
+---
+
+## Agendar Serviço com Múltiplos Itens
+
+Este endpoint permite que um cliente agende até 3 itens (serviços) em uma única requisição, permitindo a criação de um carrinho de agendamentos em apenas 1 requisição, para horários distintos em cada item.
+
+⚠️ **Nota:** Verifique a lógica que permite a inserção de múltiplos itens no agendamento. Cada campo relevante deve ter a mesma quantidade de valores (máximo de 3), separados por vírgula.
+
+### Método HTTP
+
+`POST`
+
+### Cabeçalhos
+
+| Header Name       | Tipo    | Descrição                                             | Obrigatório |
+|-------------------|---------|-------------------------------------------------------|-------------|
+| `authorization`   | string  | Chave de autenticação da API no formato Basic          | Sim         |
+| `client-id`       | string  | Identificador único do cliente                         | Sim         |
+| `client-code`     | string  | Código do cliente relacionado ao estabelecimento       | Sim         |
+| `device-id`       | string  | Identificador único do dispositivo                     | Sim         |
+
+### Parâmetros do Corpo da Requisição
+
+| Parâmetro             | Tipo    | Descrição                                                                                                  | Obrigatório |
+|-----------------------|---------|------------------------------------------------------------------------------------------------------------|-------------|
+| `client_code`         | string  | Código único do cliente no sistema.                                                                        | Sim         |
+| `client_person_code`  | string  | Código único da pessoa no sistema, relacionado ao cliente.                                                  | Sim         |
+| `observation`         | string  | Observações opcionais sobre o agendamento.                                                                  | Não         |
+| `schedule_origin`     | number  | Origem do agendamento. O valor padrão é 9 (API), e deve ser mantido.                                        | Sim         |
+| `coupon`              | string  | Cupom de desconto. Ainda não implementado.                                                                  | Não         |
+| `start_date`          | string  | Data de início do agendamento no formato `DD/MM/YYYY HH:mm:ss`. Pode incluir até 3 datas separadas por vírgula. | Sim         |
+| `professional`        | string  | Código(s) do(s) profissional(is) responsável(is) pelo serviço, separados por vírgula (até 3 profissionais).  | Sim         |
+| `item_type`           | string  | Código(s) do tipo(s) de item a ser utilizado no agendamento, separados por vírgula (até 3 itens).            | Sim         |
+| `item`                | string  | Código(s) do(s) item(ns) a ser(em) utilizado(s) no serviço, separados por vírgula (até 3 itens).            | Sim         |
+| `duration`            | string  | Duração(s) dos itens do serviço em minutos, separados por vírgula (até 3 durações).                        | Sim         |
+
+### Explicação do Comportamento de Múltiplos Itens
+
+O agendamento pode incluir até 3 itens em uma única requisição. Para isso, cada um dos campos de **data de início**, **profissional**, **tipo de item**, **item**, e **duração** deve conter até 3 valores separados por vírgula. Todos esses campos precisam ter a mesma quantidade de valores, pois o sistema espera que a quantidade de itens seja consistente entre todos eles.
+
+### Exemplo de Requisição com Múltiplos Itens
+
+```json
+{
+  "client_code": "98765",
+  "client_person_code": "abc123xyz456def789ghi012jkl345",
+  "observation": "Nenhuma observação", //Exemplo de observação
+  "schedule_origin": 9,
+  "coupon": "PROMO123", //Exemplo de cupom
+  "start_date": "25/09/2024 17:00:00,25/09/2024 17:30:00,25/09/2024 18:00:00",
+  "professional": "1234567,1234567,1234567",
+  "item_type": "1,1,1",
+  "item": "456789,456789,456789",
+  "duration": "45,45,45"
+}
+```
+
+Tenho q confirma oque os item type são
+
+Neste exemplo, o cliente está agendando 3 serviços consecutivos com o mesmo profissional e duração.
+
+### Exemplo de Resposta com Sucesso
+
+```json
+{
+  "result": {
+    "error": false,
+    "message": "Agendamento criado com sucesso.",
+    "appointment_id": "AB123456",
+    "appointment_details": {
+      "client_code": "12345",
+      "professional_code": "7087344",
+      "service": "Corte de Cabelo",
+      "start_time": "23/09/2024 17:00:00",
+      "duration": "30 minutos"
+    }
+  }
+}
+```
+
+### Exemplo de Resposta com Erro
+
+Caso os valores nos campos não sejam consistentes (por exemplo, 2 valores em `item` e 3 valores em `start_date`), o seguinte erro será retornado:
+
+```json
+{
+  "error": true,
+  "message": "O campo 'item' não tem a mesma quantidade de valores que os outros campos."
+}
+```
+
+### Exemplo de Resposta com Erro de Parâmetro
+
+Os parâmetros são configurações dentro do sistema que os estabelecimentos podem personalizar. Eles definem limites e regras para a utilização da API. No exemplo abaixo, o **parâmetro 59 - Limite de Agendamentos Futuros em Aberto por Cliente** impede a requisição quando o limite de agendamentos futuros é excedido.
+
+```json
+{
+  "error": true,
+  "message": "",
+  "appointments": [
+    {
+      "error": 1,
+      "result": "O limite de agendamentos futuros foi excedido.",
+      "scheduling_code": "",
+      "invoice_code": "",
+      "error_code": 20071,
+      "error_type": 2,
+      "fields": "",
+      "ruim": ""
+    }
+  ]
+}
+```
+
+Esse erro ocorre quando um cliente já atingiu o número máximo de agendamentos futuros permitidos. O sistema está configurado para rejeitar novas requisições de agendamento até que um ou mais agendamentos sejam concluídos ou cancelados.
+
+### Exemplo de Resposta com Erro de Limite de Dias para Agendamento
+
+Outro exemplo comum de erro é causado pelo **parâmetro 9 - Limite de Agendamento Futuro pelo Cliente (em dias)**, que define a quantidade máxima de dias à frente que um cliente pode agendar.
+
+```json
+{
+  "error": true,
+  "message": "",
+  "appointments": [
+    {
+      "error": 1,
+      "result": "Só é possível agendar horários menores que 30 dias",
+      "scheduling_code": "",
+      "invoice_code": "",
+      "error_code": 20015,
+      "error_type": 2,
+      "fields": "{\"campo\": \"30\"}",
+      "ruim": ""
+    }
+  ]
+}
+```
+
+Esse erro acontece quando o cliente tenta agendar um horário além do limite configurado de 30 dias à frente. O sistema retorna essa mensagem para informar que o agendamento não é permitido para uma data tão distante no futuro.
+
+Esses exemplos demonstram como as configurações de parâmetros dos estabelecimentos impactam as respostas da API, garantindo que o uso do sistema respeite as políticas e preferências de cada estabelecimento.
+
+### ⚠️ O que são Parâmetros de Sistema?
+
+Parâmetros de sistema são configurações específicas que cada estabelecimento pode ajustar para definir as regras de funcionamento da API. Esses parâmetros controlam desde os limites de agendamento até regras de validação de dados. Por exemplo, eles podem determinar o número máximo de agendamentos permitidos por cliente, o intervalo de dias permitido para agendar serviços, e muitas outras funcionalidades que personalizam a experiência de cada estabelecimento dentro da API.
+
+Esses parâmetros são ajustados diretamente na plataforma do estabelecimento e têm um impacto direto nas respostas da API. Quando um cliente tenta agendar ou consultar informações fora das regras estabelecidas por esses parâmetros, a API retorna uma mensagem de erro informando a inconsistência.
+
+### Como Contornar Erros Relacionados aos Parâmetros?
+
+Quando erros relacionados aos parâmetros do sistema são detectados, como os exemplos de limite de agendamentos futuros ou dias permitidos para agendamento, o estabelecimento pode ajustar essas configurações diretamente na plataforma de gestão.
+
+Para acessar e modificar esses parâmetros, o estabelecimento deve utilizar a seguinte plataforma de gerenciamento:
+
+[https://sistema.appbarber.com.br/login.php](https://sistema.appbarber.com.br/login.php)
+
+A partir dessa interface, o administrador pode revisar e adaptar os parâmetros conforme as necessidades operacionais.
+
+### Validação Personalizada
+
+Esse endpoint realiza uma validação personalizada para garantir que os campos `start_date`, `professional`, `item_type`, `item`, e `duration` tenham o mesmo número de valores. Caso contrário, o seguinte erro será retornado:
+
+```json
+{
+  "error": true,
+  "message": "O campo '{#field}' não tem a mesma quantidade de valores que os outros campos."
+}
+```
+
