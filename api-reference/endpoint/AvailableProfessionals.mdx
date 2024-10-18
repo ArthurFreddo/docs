@@ -1,0 +1,70 @@
+---
+title: 'Obter Profissionais Disponíveis'
+openapi: 'GET /api/professionals'
+description: 'Endpoint que permite a consulta dos profissionais disponíveis para realizar serviços ou combos.'
+---
+
+## Obter Profissionais Disponíveis
+
+Este endpoint permite a consulta dos profissionais disponíveis para realizar serviços ou combos no sistema. O cliente pode especificar um código de serviço ou combo nos parâmetros da consulta. Se o serviço não for informado, o campo `combo` será obrigatório, e vice-versa.
+
+### Método HTTP
+
+`GET`
+
+### Cabeçalhos
+
+| Header Name       | Tipo    | Descrição                                     | Obrigatório |
+|-------------------|---------|-----------------------------------------------|-------------|
+| `authorization`   | string  | Chave de autenticação da API no formato Basic  | Sim         |
+| `client_id`       | string  | Identificador único do cliente                 | Sim         |
+| `client-code`     | string  | Código único do cliente no sistema             | Sim         |
+| `device-id`       | string  | Identificador do dispositivo                   | Sim         |
+
+### Parâmetros da Query
+
+| Parâmetro        | Tipo    | Descrição                                                | Obrigatório |
+|------------------|---------|----------------------------------------------------------|-------------|
+| `service`        | string  | Código do serviço. Se não for informado, o campo `combo` será obrigatório. | Condicional |
+| `combo`          | string  | Código do combo. Se o serviço for informado, o campo `combo` pode ser vazio. | Condicional |
+
+### Exemplo de Requisição
+
+```json
+{
+  "service": "1234567",
+  "combo": "987"
+}
+```
+
+
+### Exemplo de Resposta com Sucesso
+
+```json
+{
+    "error": false,
+    "message": "",
+    "professionals": [
+        {
+            "employee_code": 1234567,
+            "employee_name": "01 - João Silva",
+            "employee_nickname": "João",
+            "employee_image": "",
+            "service_interval": 30,
+            "employee_evaluation": 4.5,
+            "error": 0,
+            "error_code": ""
+        },
+        {
+            "employee_code": 9876543,
+            "employee_name": "02 - Maria Souza",
+            "employee_nickname": "Maria",
+            "employee_image": "",
+            "service_interval": 40,
+            "employee_evaluation": 5,
+            "error": 0,
+            "error_code": ""
+        }
+    ]
+}
+```

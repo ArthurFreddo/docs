@@ -52,7 +52,7 @@
     "api-reference/endpoint/SignUp",
     "api-reference/endpoint/SignIn",
     "api-reference/endpoint/AvailableServices",
-    "api-reference/endpoint/AvailableSchedules",
+    "api-reference/endpoint/AvailableProfessionals",        "api-reference/endpoint/AvailableSchedules",
     "api-reference/endpoint/Appointment",
     "api-reference/endpoint/AppointMultipleSchedule",
     "api-reference/endpoint/ForgotPasswordSMS",
