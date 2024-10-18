@@ -51,14 +51,13 @@
   "pages": [
     "api-reference/endpoint/SignUp",
     "api-reference/endpoint/SignIn",
-    "api-reference/endpoint/Available",
+    "api-reference/endpoint/AvailableServices",
+    "api-reference/endpoint/AvailableSchedules",
+    "api-reference/endpoint/Appointment",
+    "api-reference/endpoint/AppointMultipleSchedule",
     "api-reference/endpoint/ForgotPasswordSMS",
     "api-reference/endpoint/ForgotPasswordEmail",
-    "api-reference/endpoint/CancelAppointment",
-    "api-reference/endpoint/AvailableSchedules",
-    "api-reference/endpoint/AvailableServices",
-    "api-reference/endpoint/AppointMultipleSchedule",
-    "api-reference/endpoint/Appointment"
+    "api-reference/endpoint/CancelAppointment"
   ]
 }
   ],
